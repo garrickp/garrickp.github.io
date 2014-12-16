@@ -1,0 +1,19 @@
+# Permalinks
+permalink:        pretty
+relative_permalinks: true
+
+# Setup
+title:            Automata
+tagline:          (un)Professional ramblings of a DevOp
+url:              https://garrickp.github.io/
+paginate:         1
+baseurl:          /
+author:
+  name:           Garrick Peterson
+  url:            https://garrickp.github.io/
+  email:          garrickp@gmail.com
+
+# Custom vars
+version:          1.0.0
+github:
+  repo:           https://github.com/garrickp/garrickp.github.io
