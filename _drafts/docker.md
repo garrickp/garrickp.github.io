@@ -1,0 +1,207 @@
+--- layout: post title: "A Few Notes on Docker" ---
+
+## My experience with Docker ##
+
+While evaluating Docker for use at my day job, I made a few notes which I
+thought might be valuable to share. I am not a Docker expert, but my research
+found a number of people who know more than me, so I will link to their posts
+where applicable.
+
+Also, I want to point out that this post comes across as mostly negative, since
+most of my focus in evaluating Docker was centered around the problems which
+prevented us from using it ourselves. This negative impression does not reflect
+my actual views on Docker accurately; I honestly look forward to using it in
+Production, when we are ready.
+
+## What Docker Is Not ##
+
+### A VM replacement ###
+
+The use cases for Docker do tend to heavily overlap the use cases for virtual
+machines: Isolating processes from each other, simple deployment of
+applications, utilizing hardware for multiple purposes.
+
+The difference is that virtual machines offer kernel isolation in addition to
+process isolation, and you can safely run the full operating system stack
+(including init(systemd, upstart, or initd), crons, ssh, etc), something which
+is not recommended in Docker.
+
+Docker, on the other hand, is about process isolation (at the level of process
+visibility, and disk visibility). You are able to use it as a full near-VM
+replacement by installing a full OS image and running init, but this is
+something I highly suggest not doing, since it will open up a number of
+potential vulnerabilities which containers could otherwise prevent.
+
+### Perfect at Isolation ###
+
+Docker itself runs as root, and your programs which run in a Docker container
+will typically be run as root as well. This opens up the potential for security
+holes, as the Kernel offers up some functionality whose isolation is based on
+the process' effective group and user ids.  One such security hole was
+identified around the Kernel [Keychain][1], and while this particular
+vulnerability was addressed, it's hard to know what other ones exist.
+
+### Secure ###
+
+Docker images are listed as "verified", but in fact they are [not][2]. Also,
+there is no real visibility into their remote build process, so it is nearly
+impossible to verify what they are shipping you when you import a base image to
+build from.
+
+Also, a vast majority of Docker images simply include stuff they don't need to.
+One simple example can be found in one of the more popular [Logstash][4] images
+on DockerHub. By default, the image executes a shell script which preforms a
+`wget` against the author's Github account to obtain a config file every time
+it is started up. It also starts up and exposes its own webserver to serve the
+Kibana front end.
+
+Thankfully, you can also build up a docker image from any tar file, so it is
+straightforward to create your own images which bypasses both of these
+problems.
+
+### Stable ###
+
+A disclaimer about this final point: it is a completely arbitrary, probably
+unfair, and likely ill-informed opinion. I am not, however, the only person to
+hold this opinion.
+
+Docker development is moving so stupidly fast, and features are being added so
+frequently, that I honestly can't see how they are able to do this and maintain
+long term stability.
+
+Additionally, Docker Inc. is a startup who appears to be burning cash (with
+acquisitions and frequent funding rounds), and this makes me worry about their
+long term stability as a corporation.  The fact that DockerHub, which is so
+tightly integrated with Docker itself, is under their exclusive control doesn't
+install a lot of confidence.
+
+## What Docker Is ##
+
+So, if that is what Docker is not, what _is_ docker?  A damned useful tool
+which makes isolating processes & distributing images very easy. That's it.
+And that's all it needs to be. I'm looking forward to competition, just so we
+can see this container space built out and made accessible to everyone,
+regardless of their security and validation requirements.
+
+## Things to Know ##
+
+Finally, the meat of this article.
+
+### Watch Your /usr Disk Space ###
+
+Docker images can easily and quickly grow to be over 1GB in size (especially if
+you follow the [recommendation][5] of building images on the top of a full OS
+install), and they're all stored in a docker directory down `/usr/`. On most
+production boxes, `/usr/` is not typically on the largest partition on the box,
+so be sure you have monitors to let you know when this partition is getting
+into the red. Even better, split the docker directory off onto a separate
+partition.
+
+### Don't Run sshd ###
+
+You don't need to run `sshd` inside a docker image. Actually running `sshd`
+will increase the surface area of the container to attacks, and it adds the
+overhead of requiring the docker image to have sshd, bash, TTYs,  and their
+dependencies installed; there are simply better ways of handling the issues
+which `sshd` in a container helps solve.
+
+See [here][6] for a more comprehensive discussion of the problems and some
+alternatives to running `sshd`.
+
+### You don't need a full OS install! ###
+
+This is the big one. Since the OS kernel is already running, the only other
+files you _need_ in a docker container are the files required by your program.
+Unless you're just running shell files, this includes everything down the
+various bin files, most of the /var, /etc, and /usr/local files, etc. In fact,
+you can run a docker container with just your executable binary, if it is
+statically linked. You can also run a dynamically linked file, if you include
+the shared libraries in the appropriate places. Try this with the `date` binary
+- run `ldd` on it to identify the linked libraries, tar up the resulting
+minimal directory, feed that into `docker load`, and run your `date` command
+with `docker run -ti ldd_date_image /bin/date`.
+
+Tools which were originally purposed to create changeroot jails can help you
+create minimal installs which provide only the necessary files while omitting
+the parts you don't need.
+
+That raises the question of why do so many images, tutorials, and Docker
+[themselves][5] recommend that you base your images off of full OS images? It
+makes installs and modifications really, really simple; that's really about it.
+Having a full OS image allows you to use tools like apt, gcc, bash, and it
+removes the requirement of caring about what dynamic libraries your program
+links against.
+
+My question is, though, if all you're going to run in the container is a Go web
+application, why do you need /bin/mount?
+
+Examples of how to minimize your Docker image size can be found in the
+appendix: [6][6], [7][7]
+
+### Dockerfiles are not enough ###
+
+In the world of rich configuration management and orchestration tools,
+dockerfiles are downright primitive: they are less flexible and deterministic
+than even shell scripts.  There is no templating, limited copy capabilities,
+every step creates an intermediate image on the server (adding to `/usr/`
+bloat), the builds are not deterministic, and they require you to have the full
+OS suite of tools installed in the image to work (they typically run a
+container for each `RUN` command and store the result as a new image).
+
+If you want to have repeatable docker builds (and this is highly recommended),
+you will need a separate orchestration tool. I suggest Ansible, but I leave
+that up to you.
+
+### Vagrant Supports Docker ###
+
+And it does so very well. Highly recommended for developers who want to build
+applications for docker.
+
+### Don't run the containers your developers give you ###
+
+If you do so, you have no idea what is going into production. You don't know
+what version of Openssl is installed, you don't know what debugging tools are
+installed and running by default, you don't know what sensitive information has
+been accidentally included in the image and made available to the next major
+discovered security hole. You also don't know if their image is built upon one
+which does insecure things, like grabbing its configs from a third party's
+Github account.
+
+Instead, have your developers give you Dockerfiles (hopefully as part of a
+package including proper orchestration files and configuration templates) which
+you can then build on top of a verified, locally hosted image. Include a
+properly set up Vagrantfile, and you can make it easy for them to have a
+production image which they can develop against. Everyone will be happy.
+
+### Applications can (and should) be Docker aware ###
+
+When an application is run inside a Docker container, Docker provides it with a
+number of environment variables. This can help identify the ports it should
+connect to to access shared services, shared directories, and various other
+information you want to pass to it. If the application is aware of these
+environment variables, then there's no need for shim scripts which you need to
+dynamically configure applications, or statically configure container ports.
+
+## In Summary ##
+
+Docker is awesome, with caveats.
+
+If you have a build process which is well suited for creating repeatable,
+secure builds, Docker can do little but add to the tools in your arsenal.
+
+If you don't have a build process which can make repeatable builds at the press
+of a button, you will get more benefit out of working towards that point than
+you will in deploying Docker.
+
+Containers in general are an exciting prospect, and I look forward to watching
+the field grow.
+
+## Appendix ##
+[1](http://www.projectatomic.io/blog/2014/09/yet-another-reason-containers-don-t-contain-kernel-keyrings/ "Containers don't contain")
+[2](https://titanous.com/posts/docker-insecurity "Docker insecurity")
+[3](http://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/ "Docker SSH considered Evil")
+[4](https://registry.hub.docker.com/u/pblittle/docker-logstash/ "Docker Logstash")
+[5](https://docs.docker.com/articles/dockerfile_best-practices/#from)
+[6](http://gregoryszorc.com/blog/2014/10/13/deterministic-and-minimal-docker-images/ "Deterministic and Minimal Docker Images")
+[7](https://medium.com/@kelseyhightower/optimizing-docker-images-for-static-binaries-b5696e26eb07 "Optimizing Docker Images for Static Binaries")
+
