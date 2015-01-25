@@ -53,7 +53,7 @@ loader:                                 ; the loader (defined as the entry point
         mov eax, 0xDEADBEEF             ; Our indicator that the program actually ran
 .loop:
         jmp .loop                       ; Loop forever
-{% highlight %}
+{% endhighlight %}
 
 Note that this does not actually do anything too interesting, but we can look
 for the DEADBEEF in the VM logs. We see DEADBEEF, and we know that it kicked
@@ -140,7 +140,7 @@ and grub as the bootloader. The menu.lst configures grub to look for our newly
 compiled kernel, and we use bochsrc.txt to configure the VM.
 
 bochsrc.txt
-{% highlight %}
+{% highlight text %}
 megs:                   32
 display_library:        term
 romimage:               file=/usr/share/bochs/BIOS-bochs-latest
@@ -153,7 +153,7 @@ magic_break:            enabled=1
 {% endhighlight %}
 
 menu.lst
-{% highlight %}
+{% highlight text %}
 default=0
 timeout=0
 
@@ -165,7 +165,7 @@ Kick off the VM against our newly created OS, interrupt our infinite loop with
 a `killall -SIGHUP bochs`. This will cause it to end while writing the state to
 the log file, so we look for this:
 
-{% highlight %}
+{% highlight text %}
 01273065000i[CPU0 ] EFER   = 0x00000000
 01273065000i[CPU0 ] | RAX=00000000deadbeef  RBX=000000000002cd80
 01273065000i[CPU0 ] | RCX=0000000000000001  RDX=0000000000000000
