@@ -18,9 +18,9 @@ room for adjusting your plan based on the road conditions. I'd even go so far as
 to assert that the perceived road conditions must be included in your computer
 vision identification and planning stages of automation.
 
-To that end, I'd like to outline a few points which I believe are commonly not
-well enough understood by programmers and engineers who don't live or drive in
-areas with hard winters.
+To that end, I'd like to call out a few points which I believe are not well
+understood by programmers and engineers who don't regularly drive in areas with
+hard winters.
 
 ## Myths About Winter Driving ##
 
