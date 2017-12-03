@@ -13,7 +13,7 @@ in the absence of broadly available LIDAR sensors.
 One of the questions which was raised (and upon which I expounded) was the
 effects of ice and other winter driving obstacles. The answer boiled down to
 "that's an engineering problem". And while there is certainly room for the
-engineering around traction to become better and more reliably - there's also
+engineering around traction to become better and more reliable - there's also
 room for adjusting your plan based on the road conditions. I'd even go so far as
 to assert that the perceived road conditions must be included in your computer
 vision identification and planning stages of automation.
