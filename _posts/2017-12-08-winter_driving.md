@@ -50,17 +50,17 @@ matter more to winter driving than any other factor.
 On dry pavement, such systems will keep you from sliding. Traction Control
 systems can reliably detect slips and reduce power to the drivetrain in
 fractions of a second - faster than your average driver can. The problem is,
-when you're on ice, that fraction of a second is enough to send your vehicle out
-of control - once it's started sliding, it's much harder to stop sliding, you
-have to hope your tires will regain sufficient traction to provide directional
+when you're on ice, that fraction of a second is enough to send your vehicle
+out of control; and once it's started sliding, it's hard to stop. You have to
+take action to give your tires sufficient traction to regain directional
 control before you travel too far out of your lane.
 
-And when you're sliding, safe recovery depends upon the tires traveling at the
-same speed and direction as the slide. I don't know of a traction control
-mechanism which automatically manages this properly; mostly because they are
-unable to detect sideways motion or the car's actual speed at the granularity
-required. Of course, there is something which could have the proper
-granularity: the positioning sensors of the automated driving system.
+Safe recovery from a slide depends upon the tires traveling at the same speed
+and direction as the slide. I don't know of a traction control mechanism which
+automatically manages this properly; mostly because they are unable to detect
+sideways motion or the car's actual speed at the granularity required. Of
+course, there is something which could have the proper granularity: the
+positioning sensors of the automated driving system.
 
 How do you prevent slides? Identify an icy intersection and accelerate slowly,
 and use the information available to recover when you do slide. Also, do not
