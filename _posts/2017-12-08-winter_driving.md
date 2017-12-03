@@ -84,11 +84,11 @@ manifold. Fire.
 
 ### Roads are Only Icy if the Temperature is Below 0 C ###
 
-Perhaps ironically, ice the most slippery on a sunny day following a freeze. The
-air temperature gets above freezing, and melts the very top of a patch of ice,
-leaving behind a thin layer of water. Any friction the ice would have naturally
-provided, or that the siping on tires could have given on that ice is almost
-completely negated by the thin layer of water.
+Perhaps ironically, ice is the most slippery on a sunny day following a freeze.
+The air temperature gets above freezing, and melts the very top of a patch of
+ice, leaving behind a thin layer of water. Any friction the ice would have
+naturally provided, or that the siping on tires could have given on that ice is
+almost completely negated by the thin layer of water.
 
 You can try this yourself: Grab an ice cube fresh out of the freezer, and
 compare your ability to hold on to it to one that's been out in the air for a
