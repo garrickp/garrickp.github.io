@@ -68,12 +68,12 @@ attempt to accelerate up an icy overpass.
 
 ### A Paradoxical Case of When Speeding is Important on Ice ###
 
-In many cases, slow counters the challenges raised by ice. However there exists
-an important edge case where you need to speed up on icy surfaces: when coming
-up on a hill.  If a vehicle does not have the necessary momentum to crest a
-hill, it will end up stuck on that hill, and short of adding chains, the vehicle
-will have to go back down the hill and retry building sufficient momentum to
-crest the hill. 
+In many cases, going slow will stop or minimze the challenges raised by ice.
+However there exists an important edge case where you need to speed up on icy
+surfaces: when coming up on a hill.  If a vehicle does not have the necessary
+momentum to crest a hill, it will end up stuck on that hill, and short of
+adding chains, the vehicle will have to go back down the hill and retry
+building sufficient momentum to crest the hill. 
 
 If you've ever seen a car on fire in the middle of a snow storm, that's probably
 what happened. Why the fire? Well, the "planning" part of the driver said "we
